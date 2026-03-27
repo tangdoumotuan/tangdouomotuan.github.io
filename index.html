@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>猫猫警长探案集 · 消失的猫粮</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #3e2a2f;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255, 235, 190, 0.1) 2%, transparent 2.5%);
+            background-size: 32px 32px;
+            font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', 'Courier New', system-ui, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .game-wrapper {
+            max-width: 1300px;
+            width: 100%;
+            background: #fef7e8;
+            border-radius: 64px 48px 72px 48px;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 250, 220, 0.8);
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: #2b2a1e;
+            padding: 20px 24px;
+            text-align: center;
+            border-bottom: 4px solid #e3b87c;
+        }
+
+        .game-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #ffefcf;
+            letter-spacing: 2px;
+        }
+
+        .game-header p {
+            margin: 8px 0 0;
+            color: #d6c29d;
+            font-size: 0.9rem;
+        }
+
+        .game-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 24px 28px;
+            background: #fffaf0;
+        }
+
+        .suspects-panel {
+            flex: 1.2;
+            min-width: 240px;
+            background: #f5efdf;
+            border-radius: 48px;
+            padding: 20px 16px;
+            box-shadow: inset 0 0 0 1px #fff8e8, 0 8px 12px rgba(0, 0, 0, 0.05);
+            align-self: start;
+        }
+
+        .suspects-panel h3 {
+            margin-top: 0;
+            text-align: center;
+            color: #5c3e2b;
+            border-bottom: 2px dashed #e7cfaa;
+            padding-bottom: 8px;
+        }
+
+        .cat-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fffaf0;
+            margin: 16px 0;
+            padding: 10px 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #eeddbb;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .cat-card:hover {
+            background: #ffe9ce;
+            transform: scale(0.98);
+        }
+
+        .cat-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #c2a575; /* fallback 背景色 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cat-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cat-info {
+            flex: 1;
+        }
+        .cat-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #3a2a1c;
+        }
+        .cat-desc {
+            font-size: 0.75rem;
+            color: #7c6952;
+        }
+
+        .story-panel {
+            flex: 3;
+            min-width: 280px;
+            background: #ffffffdb;
+            border-radius: 48px;
+            padding: 20px 24px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .dialogue-box {
+            background: #fdf3e0;
+            padding: 18px 20px;
+            border-radius: 36px;
+            border: 1px solid #f0e2ca;
+            margin-bottom: 20px;
+            height: 280px;
+            overflow-y: auto;
+            font-size: 1rem;
+            line-height: 1.45;
+            color: #2f2a24;
+            box-shadow: inset 0 0 0 2px #fffef7, 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .action-area {
+            background: transparent;
+            min-height: 120px;
+            margin-top: auto;
+        }
+
+        .options-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            background: #ede3cf;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-family: inherit;
+            color: #4d351f;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 5px solid #c6a56b;
+        }
+
+        .btn-primary {
+            background: #dbbc87;
+            color: #2c1c0c;
+            border-left-color: #a5723b;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.85rem;
+        }
+
+        .btn:hover {
+            background: #ffdfb0;
+            transform: translateY(-1px);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .input-group input {
+            flex: 2;
+            padding: 10px 15px;
+            border-radius: 48px;
+            border: 1px solid #dac29c;
+            font-family: inherit;
+            background: #fffcf5;
+        }
+        .verification-step {
+            background: #f3ecd9;
+            padding: 14px;
+            border-radius: 30px;
+            margin-top: 15px;
+        }
+        .verification-option {
+            margin: 8px 0;
+        }
+
+        .restart-btn {
+            background: #7c6248;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 32px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .reward-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        footer {
+            background: #e6d8c4;
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 10px;
+            color: #7a684e;
+        }
+
+        @media (max-width: 780px) {
+            .game-layout {
+                flex-direction: column;
+                padding: 16px;
+            }
+            .suspects-panel {
+                min-width: auto;
+            }
+            .dialogue-box {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper" id="gameApp">
+    <div class="game-header">
+        <h1>🐱🔍 猫猫警长探案集 · 消失的猫粮</h1>
+        <p>墨团·华生 | 协助糖豆·福尔摩斯找出真凶</p>
+    </div>
+    <div class="game-layout">
+        <div class="suspects-panel">
+            <h3>🐾 询问对象</h3>
+            <div class="cat-card" data-cat="fudai">
+                <div class="cat-avatar"><img src="./图/福呆呆.jpg" alt="福呆呆" onerror="this.onerror=null; this.parentElement.innerHTML='🍂';"></div>
+                <div class="cat-info">
+                    <div class="cat-name">福呆呆</div>
+                    <div class="cat-desc">狸花 · 温柔乖巧</div>
+                </div>
+            </div>
+            <div class="cat-card" data-cat="huang">
+                <div class="cat-avatar"><img src="./图/黄鼠狼.jpg" alt="黄鼠狼" onerror="this.onerror=null; this.parentElement.innerHTML='⚡';"></div>
+                <div class="cat-info">
+                    <div class="cat-name">黄鼠狼</div>
+                    <div class="cat-desc">奶牛 · 疯癫活泼</div>
+                </div>
+            </div>
+            <div class="cat-card" data-cat="miaomiao">
+                <div class="cat-avatar"><img src="./图/喵喵.jpg" alt="喵喵" onerror="this.onerror=null; this.parentElement.innerHTML='🐱';"></div>
+                <div class="cat-info">
+                    <div class="cat-name">喵喵</div>
+                    <div class="cat-desc">橘猫 · 高傲敏锐</div>
+                </div>
+            </div>
+            <div class="cat-card" data-cat="sherry">
+                <div class="cat-avatar"><img src="./图/雪莉.jpg" alt="雪莉" onerror="this.onerror=null; this.parentElement.innerHTML='🌸';"></div>
+                <div class="cat-info">
+                    <div class="cat-name">雪莉</div>
+                    <div class="cat-desc">布偶 · 优雅知性</div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="endInvestBtn" style="margin-top: 24px; width: 100%;">🔎 结束调查 · 开始推理</button>
+        </div>
+
+        <div class="story-panel">
+            <div class="dialogue-box" id="dialogueContent">
+                🌅 清晨，粮仓一片狼藉，猫粮散落一地。看来有猫在夜深猫静的时刻谋杀了猫粮！<br>
+                橘猫糖豆跳到高处：“各位！这案子非我糖豆·福尔摩斯莫属！我和助手墨团·华生将在一日内揪出真凶！”<br>
+                糖豆：“所以，就拜托你了，华生，去询问其他猫关于这个案件的线索吧。”<br>
+                墨团：“....什么嘛，搞了半天还不是我探案你偷懒...”<br>
+                <br>🐾 点击左侧猫咪开始调查，收集线索后点击【结束调查】。
+            </div>
+            <div class="action-area" id="actionArea">
+                <div class="options-area">
+                    <span class="btn-sm" style="background:#e7d8be;">✨ 点击左侧猫咪头像开始询问 ✨</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>✨ 喵证如山 · 每一句喵话都可能是线索 ✨</footer>
+</div>
+
+<script>
+    // ------------------- 游戏数据 -------------------
+    const catDialogues = {
+        fudai: {
+            name: "福呆呆",
+            avatar: "🍂",
+            initial: "墨团哥哥，昨晚我听到粮仓有动静，吓得躲起来了……我躲在角落时，好像看到一个橘色的影子跑出去了，特别快。",
+            questions: [
+                { text: "❓ 你昨晚在粮仓附近做什么？", reply: "我……我藏了点鱼干在那边，想找机会送给喵喵的和他交朋友的。今天发现不见了……我只告诉了黄鼠狼一只猫呀。" },
+                { text: "❓ 那个橘色影子有什么特点？", reply: "应该是橘色的，跑得飞快。我当时害怕，没敢仔细看，也不排除我记错了。" },
+                { text: "❓ 还有没有看到别的？", reply: "后来雪莉姐姐从另一边走过来，她可能看到了什么。她总是什么都知道的样子。" }
+            ]
+        },
+        huang: {
+            name: "黄鼠狼",
+            avatar: "⚡",
+            initial: "昨晚可好玩了！我找到宝藏啦！福呆呆藏的鱼干真好吃！粮仓那边也有动静，我看见一个影子‘嗖’一下就跑了，那速度跟我有一拼！",
+            questions: [
+                { text: "❓ 你偷了福呆呆的鱼干？", reply: "这个的话，好东西要分享嘛！不过我可没偷猫粮！粮仓那个门我可打不开，太麻烦了，能打开粮仓偷到猫粮的猫想必很聪明。" },
+                { text: "❓ 影子长什么样？看清了吗？", reply: "没看清，跑太快了！但跑得那么快肯定不是福呆呆那种小孩子。" },
+                { text: "❓ 你说门难开，那谁可能打开？", reply: "聪明猫呗！雪莉姐姐肯定行，她什么都会。" }
+            ]
+        },
+        miaomiao: {
+            name: "喵喵",
+            avatar: "🐱",
+            initial: "你们兄弟俩真有意思，伪装起大侦探开始探起案来了?我昨晚在屋顶看星星，看到福呆呆在粮仓附近鬼鬼祟祟的，后来就跑掉了。他平时挺老实的，没想到会干这种事。",
+            questions: [
+                { text: "❓ 你确定是福呆呆？", reply: "狸花色，小小一只，除了他还能是谁？而且他和两脚兽关系好，肯定知道粮食具体藏在粮仓的哪里。别看他小，贼精贼精的。" },
+                { text: "❓ 你自己昨晚在做什么？", reply: "呆在高处看星星呗，还能干什么？你怀疑我？.......好吧，我承认我去过粮仓一趟，但是只是好奇福呆呆在干什么，虽然最后一无所获，但也没猫发现我，说起来。。。我去的时候门还是关着的" },
+                { text: "❓ 有没有看到其他猫？", reply: "这你可问对猫了，我那个视角看的可全面了，当时雪莉在后院散步，她总爱晚上溜达。至于黄鼠狼在草丛里翻东西，最后好像叼着什么走了。" }
+            ]
+        },
+        sherry: {
+            name: "雪莉",
+            avatar: "🌸",
+            initial: "哎呀，你们忙得真认真。我昨晚去后院散步，看到黄鼠狼在草丛里翻东西，然后喵喵从粮仓那边跑出来，不急不慢的。",
+            questions: [
+                { text: "❓ 喵喵从粮仓跑出来？他偷猫粮了？", reply: "不像偷猫粮，他那表情像是刚刚偷窥回来的样子，倒是我去查看情况的时候粮仓门大开着。" },
+                { text: "❓ 你有什么信息？", reply: "这个问题应该由我来问你吧？不过据我所知能开那个门的猫可不多，我算一个。怎么样，你会把亲姐姐定为犯人吗？" }
+            ]
+        }
+    };
+
+    // 游戏状态
+    let gamePhase = 'investigate';   // 'investigate', 'accuse', 'verification', 'ending'
+    let currentVerifyStep = 0;       // 0,1,2 对应三个辩论步骤
+
+    const dialogueBox = document.getElementById('dialogueContent');
+    const actionArea = document.getElementById('actionArea');
+    const endInvestBtn = document.getElementById('endInvestBtn');
+    const catCards = document.querySelectorAll('.cat-card');
+
+    // 辅助：追加文本到对话框
+    function appendDialogue(text) {
+        const newText = text.replace(/\n/g, '<br>');
+        dialogueBox.innerHTML += `<br>${newText}`;
+        dialogueBox.scrollTop = dialogueBox.scrollHeight;
+    }
+
+    // 设置主对话内容（可选是否清空操作区）
+    function setDialogue(text, clearActions = true) {
+        dialogueBox.innerHTML = text.replace(/\n/g, '<br>');
+        dialogueBox.scrollTop = dialogueBox.scrollHeight;
+        if (clearActions) {
+            actionArea.innerHTML = '';
+        }
+    }
+
+    // 显示默认调查界面
+    function showDefaultInvestigateUI() {
+        actionArea.innerHTML = `<div class="options-area"><span class="btn-sm" style="background:#e7d8be;">✨ 点击左侧猫咪头像开始询问 ✨</span></div>`;
+    }
+
+    // 渲染某个猫的调查界面
+    function renderCatUI(catId) {
+        if (gamePhase !== 'investigate') return;
+        const cat = catDialogues[catId];
+        if (!cat) return;
+
+        appendDialogue(`<hr><strong>🐱 与 ${cat.name} 对话：</strong><br>${cat.initial}`);
+        
+        let html = `<div style="margin-top:12px;"><strong>📌 追问：</strong></div><div class="options-area">`;
+        cat.questions.forEach((q, idx) => {
+            html += `<button class="btn btn-sm" data-qidx="${idx}">${q.text}</button>`;
+        });
+        html += `<button class="btn btn-sm" id="backToMain">🔙 返回</button>`;
+        html += `</div>`;
+        actionArea.innerHTML = html;
+
+        cat.questions.forEach((q, idx) => {
+            const btn = actionArea.querySelector(`[data-qidx="${idx}"]`);
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    appendDialogue(`<span style="color:#8b6946;">📜 追问：</span> ${q.reply}`);
+                });
+            }
+        });
+        const backBtn = actionArea.querySelector('#backToMain');
+        if (backBtn) backBtn.addEventListener('click', () => {
+            showDefaultInvestigateUI();
+        });
+    }
+
+    // 结束调查，进入指认阶段
+    function enterAccusePhase() {
+        if (gamePhase !== 'investigate') return;
+        gamePhase = 'accuse';
+        catCards.forEach(card => {
+            card.style.pointerEvents = 'none';
+            card.style.opacity = '0.7';
+        });
+        endInvestBtn.disabled = true;
+        endInvestBtn.style.opacity = '0.6';
+
+        setDialogue(`😼 糖豆·福尔摩斯：<br>“怎么样？华生，你知道凶手是谁了吗？”<br><br>🔍 请输入你怀疑的猫咪名字`);
+        actionArea.innerHTML = `
+            <div class="input-group">
+                <input type="text" id="suspectInput" placeholder="输入猫名，例如 喵喵" autocomplete="off">
+                <button class="btn btn-primary" id="submitSuspect">🔎 指认凶手</button>
+            </div>
+        `;
+        const submitBtn = document.getElementById('submitSuspect');
+        const inputField = document.getElementById('suspectInput');
+        const handleAccuse = () => {
+            let name = inputField.value.trim();
+            if (!name) return;
+            // 统一处理各种点号变体，并将“墨团·华生”等转换为“墨团”
+            name = name.replace(/[•·]/g, '·'); // 统一为半角点或全角点，但识别用
+            if (name === '糖豆·福尔摩斯' || name === '糖豆•福尔摩斯') name = '糖豆';
+            if (name === '墨团·华生' || name === '墨团•华生') name = '墨团';
+            if (name === '糖豆') {
+                startVerification();
+            } else if (['福呆呆', '黄鼠狼', '喵喵', '雪莉'].includes(name)) {
+                showBadEnding(name);
+            } else if (name === '墨团') {
+                showHiddenEnding();
+            } else {
+                appendDialogue(`😼 糖豆：“没查到线索，也不至于编个猫名出来呀，华生！再好好想想。”`);
+                inputField.value = '';
+            }
+        };
+        submitBtn.addEventListener('click', handleAccuse);
+        inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleAccuse(); });
+    }
+
+    // ----- 验证环节（重构，支持错误重选）-----
+    function startVerification() {
+        gamePhase = 'verification';
+        currentVerifyStep = 0;
+        setDialogue("🐱‍👑 糖豆：“你有什么证据？可不能乱冤枉亲哥哥啊！”");
+        renderVerifyOptions();
+    }
+
+    function renderVerifyOptions() {
+        if (gamePhase !== 'verification') return;
+        if (currentVerifyStep === 0) {
+            actionArea.innerHTML = `
+                <div class="verification-step">
+                    <p>📌 请选择一项关键线索：</p>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="1">1. 全程没有猫提到糖豆的行踪</button></div>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="2">2. 黄鼠狼说凶手不是小孩子</button></div>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="3">3. 福呆呆说看到了橘色身影</button></div>
+                </div>
+            `;
+        } else if (currentVerifyStep === 1) {
+            actionArea.innerHTML = `
+                <div class="verification-step">
+                    <p>🔎 请继续举证：</p>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="1">1. 喵喵说他当时只是想去看眼福呆呆</button></div>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="2">2. 黄鼠狼和福呆呆都提到凶手是飞速离开</button></div>
+                </div>
+            `;
+        } else if (currentVerifyStep === 2) {
+            actionArea.innerHTML = `
+                <div class="verification-step">
+                    <p>🧩 最后的反驳：</p>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="1">1. 他确实说过有可能是看错</button></div>
+                    <div class="verification-option"><button class="btn verify-btn" data-choice="2">2. 粮仓的门一般的猫打不开</button></div>
+                </div>
+            `;
+        }
+        document.querySelectorAll('.verify-btn').forEach(btn => {
+            btn.removeEventListener('click', handleVerifyChoice);
+            btn.addEventListener('click', handleVerifyChoice);
+        });
+    }
+
+    function handleVerifyChoice(e) {
+        const choice = parseInt(e.currentTarget.getAttribute('data-choice'), 10);
+        if (currentVerifyStep === 0) {
+            if (choice === 3) {
+                currentVerifyStep = 1;
+                setDialogue("😼 糖豆：“橘色身影，这个地方也不止我一只橘猫，你如何证明是我呢？”");
+                renderVerifyOptions();
+            } else {
+                const msg = choice === 1 
+                    ? "😼 糖豆：“我是侦探啊，他们为什么要提我的行踪呢？况且这不证明了案发当时我不在附近吗？” (重新选择)"
+                    : "😼 糖豆：“这条信息范围太广泛了，华生，你要不看看我们这里大猫和小猫的比例再指认犯人吧” (重新选择)";
+                appendDialogue(msg);
+                renderVerifyOptions();
+            }
+        } 
+        else if (currentVerifyStep === 1) {
+            if (choice === 2) {
+                currentVerifyStep = 2;
+                setDialogue("😼 糖豆：“那....有没有可能是福福弟弟看错颜色了呢？他当时有百分百保证凶手是橘色吗？”");
+                renderVerifyOptions();
+            } else {
+                appendDialogue("😼 糖豆：“华生，你太年轻，怎么能听信一面之词呢？” (重新选择)");
+                renderVerifyOptions();
+            }
+        } 
+        else if (currentVerifyStep === 2) {
+            if (choice === 2) {
+                setDialogue(dialogueBox.innerHTML + `<br><br>😼 糖豆：“这个。。。。”<br>🐾 墨团：“哥，承认吧，擅长开门的只有你和雪莉姐，凶手不是你，难道是雪莉姐?想必橘色与跑得飞快这两条线索与她并不符合吧？雪莉姐也可以证明喵喵是不急不慢地离开的粮仓，所以线索全部都指向了你，糖豆•福尔摩斯！”`);
+                actionArea.innerHTML = `<button class="btn btn-primary" id="finalTrueEndBtn">✨ 揭示真相 ✨</button>`;
+                document.getElementById('finalTrueEndBtn')?.addEventListener('click', () => showTrueEnding());
+            } else {
+                appendDialogue("😼 糖豆：“所以说还是没有确切证据，你又怎能怀疑我呢？” (重新选择)");
+                renderVerifyOptions();
+            }
+        }
+    }
+
+    // 真结局（带下载和密码）
+    function showTrueEnding() {
+        gamePhase = 'ending';
+        setDialogue(`🏆 真结局 🏆<br><br>墨团列出证据，糖豆最终承认自己的罪行，被打入禁闭。禁闭期到后他决心从良，从此之后再也没有猫粮失窃案。<br>福呆呆：“为什么我的小鱼干还在失窃。。。。。(╥ω╥\`)”<br><br>✨ 作为破案奖励，你获得了密码箱的密码！密码是：<strong style="font-size:1.3rem; color:#b45f2b;">330</strong> ✨`);
+       // 原代码中的下载部分替换为：
+actionArea.innerHTML = `
+    <div class="reward-area">
+        <button class="btn btn-primary" id="downloadRewardBtn">🎁 下载生日贺图 · 魔法福呆呆 🎁</button>
+        <button class="restart-btn" id="restartFromEnding">🐟 重新探案 🐟</button>
+    </div>
+`;
+
+const downloadBtn = document.getElementById('downloadRewardBtn');
+if (downloadBtn) {
+    downloadBtn.addEventListener('click', () => {
+        const answer = prompt("验证身份问题：身上衣裳口中食的上一句是什么？");
+        if (!answer) return;
+        // 规范化：去除首尾空格，去掉句末的？和。
+        let normalized = answer.trim();
+        normalized = normalized.replace(/[？。]$/, ''); // 去掉末尾的问号或句号
+        if (normalized === "卖翁得钱何所营") {
+            // 验证通过，执行下载
+            const link = document.createElement('a');
+            link.href = "./图/魔法福呆呆.png";
+            link.download = "魔法福呆呆.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert("🎉 图片开始下载！祝你生日快乐～ 🎂🐱（请点击确定，如下载失败可在预览后右键保存）");
+        } else {
+            alert("答案不对哦，再回忆一下我的糗事吧o(╥﹏╥)o");
+        }
+    });
+}
+attachRestart();
+    }
+
+    function showBadEnding(wrongName) {
+        gamePhase = 'ending';
+        setDialogue(`❌ 坏结局 ❌<br><br>墨团·华生最终指认了${wrongName}为凶手，在${wrongName}被关禁闭的这些天，猫粮失窃案依旧频发，看来墨团决策失误了，他丢失了福尔摩斯助手一职，并被认为是凶手同伙，也被打入禁闭。`);
+        actionArea.innerHTML = `<button class="restart-btn" id="restartFromEnding">🐟 重新探案 🐟</button>`;
+        attachRestart();
+    }
+
+    function showHiddenEnding() {
+        gamePhase = 'ending';
+        setDialogue(`🌙 隐藏结局 🌙<br><br>糖豆:“。。。。你是自首了?我真的没想到会是你，我的亲弟弟。。。我为你自动自首的行为倍受感动，但不管怎么样，我们流程还是要走的”<br><br>墨团被关入禁闭室，一只猫静静地呆着呆着，不知道呆了多久，不知道外面发生了什么，当他实在受不住寂寞，打开了禁闭室的门，发现外面空无一猫。。。。墨团一看日历：昨天是猫咪回归猫星报告地球见闻的日子。。。看来我们的墨团是被留在地球了。`);
+        actionArea.innerHTML = `<button class="restart-btn" id="restartFromEnding">🐟 重新探案 🐟</button>`;
+        attachRestart();
+    }
+
+    function attachRestart() {
+        const btn = document.getElementById('restartFromEnding');
+        if (btn) btn.addEventListener('click', () => location.reload());
+    }
+
+    // 初始化
+    function init() {
+        catCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const catId = card.getAttribute('data-cat');
+                renderCatUI(catId);
+            });
+        });
+        endInvestBtn.addEventListener('click', enterAccusePhase);
+        showDefaultInvestigateUI();
+    }
+
+    init();
+</script>
+</body>
+</html>
